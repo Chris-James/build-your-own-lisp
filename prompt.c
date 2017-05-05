@@ -31,7 +31,7 @@ int main(int argc, char ** argv) {
   mpc_parser_t * Lispy = mpc_new("lispy");
 
   mpca_lang(MPCA_LANG_DEFAULT,
-    " number  : /-?[0-9]+/;                            \
+    " number  : /-?[0-9]+(\\.[0-9]+)?/;                \
       operator: '+' | '-' | '*' | '/';                 \
       expr    : <number> | '(' <operator> <expr>+ ')'; \
       lispy   : /^/ <operator> <expr>+ /$/;            \
