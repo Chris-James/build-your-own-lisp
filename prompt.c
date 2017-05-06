@@ -35,7 +35,7 @@ int main(int argc, char ** argv) {
 
   mpca_lang(MPCA_LANG_DEFAULT,
     " number  : /-?[0-9]+(\\.[0-9]+)?/;                \
-      operator: '+' | '-' | '*' | '/' | '%';           \
+      operator: '+' | '-' | '*' | '/' | '%' | '^';     \
       expr    : <number> | '(' <operator> <expr>+ ')'; \
       lispy   : /^/ <operator> <expr>+ /$/;            \
     ",
@@ -98,6 +98,13 @@ long eval_op(long x, char* op, long y) {
       break;
     case '%':
       result = x % y;
+      break;
+    case '^':
+      result = x;
+      while (y > 1) {
+        result *= x;
+        y--;
+      }
       break;
   }
 
