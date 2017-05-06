@@ -81,26 +81,25 @@ int main(int argc, char ** argv) {
  */
 long eval_op(long x, char* op, long y) {
 
-  long result = 0;
+  long result = x;
 
   switch (*op) {
     case '+':
-      result = x + y;
+      result += y;
       break;
     case '-':
-      result = x - y;
+      result -= y;
       break;
     case '*':
-      result = x * y;
+      result *= y;
       break;
     case '/':
-      result = x / y;
+      result /= y;
       break;
     case '%':
-      result = x % y;
+      result %= y;
       break;
     case '^':
-      result = x;
       while (y > 1) {
         result *= x;
         y--;
