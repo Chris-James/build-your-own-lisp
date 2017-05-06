@@ -23,6 +23,12 @@ void add_history(char * unused) {}
 #include <editline/readline.h>
 #endif
 
+typedef struct {
+  int type;
+  long num;
+  int err;
+} lval;
+
 long eval_op(long x, char* op, long y);
 long eval(mpc_ast_t* t);
 
