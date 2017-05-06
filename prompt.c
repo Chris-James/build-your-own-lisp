@@ -223,7 +223,7 @@ lval eval_op(lval x, char* op, lval y) {
  *  field {char*}    t.tag - The rules used to parse node.
  *  field {char*}    t.contents - The actual contents of the node.
  *  field {struct**} t.children - Node's child nodes.
- * @return {long} x - Result of evaluation.
+ * @return {lval} x - Result of evaluation.
  */
 lval eval(mpc_ast_t* t) {
 
