@@ -161,7 +161,7 @@ void lval_println(lval v) {
  * @param {lval}  x  - First operand.
  * @param {char*} op - Desired operator.
  * @param {lval}  y  - Second operand.
- * @return {long} result - The result of operation.
+ * @return {lval} result - The result of operation.
  */
 lval eval_op(lval x, char* op, lval y) {
 
