@@ -53,8 +53,9 @@ int main(int argc, char ** argv) {
     mpc_result_t r;
 
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      // Parse successful, print abstract syntax tree
-      mpc_ast_print(r.output);
+      // Evaluate input and print result
+      long result = eval(r.output);
+      printf("%li \n", result);
       mpc_ast_delete(r.output);
     } else {
       // Error encountered
