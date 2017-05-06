@@ -39,7 +39,7 @@ void lval_print(lval v);
 void lval_println(lval v);
 
 lval eval_op(lval x, char* op, lval y);
-long eval(mpc_ast_t* t);
+lval eval(mpc_ast_t* t);
 
 int main(int argc, char ** argv) {
 
@@ -225,18 +225,20 @@ lval eval_op(lval x, char* op, lval y) {
  *  field {struct**} t.children - Node's child nodes.
  * @return {long} x - Result of evaluation.
  */
-long eval(mpc_ast_t* t) {
+lval eval(mpc_ast_t* t) {
 
   // If tagged as a number, return.
   if (strstr(t->tag, "number")) {
-    return atoi(t->contents);
+    errno = 0;
+    long x = strtol(t->contents, NULL, 10);
+    return errno != ERANGE ? lval_num(x) : lval_err(L_ERR_BAD_NUM);
   }
 
   // Operator is always the second child.
   char* op = t->children[1]->contents;
 
   // Store third child
-  long x = eval(t->children[2]);
+  lval x = eval(t->children[2]);
 
   int i = 3;
   while (strstr(t->children[i]->tag, "expr")) {
