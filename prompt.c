@@ -24,6 +24,7 @@ void add_history(char * unused) {}
 #endif
 
 long eval_op(long x, char* op, long y);
+long eval(mpc_ast_t* t);
 
 int main(int argc, char ** argv) {
 
@@ -97,4 +98,34 @@ long eval_op(long x, char* op, long y) {
   }
 
   return result;
+}
+
+/*******************************************************************************
+ * eval
+ *
+ * @param {struct*}  t     - The node to evaluate.
+ *  field {char*}    t.tag - The rules used to parse node.
+ *  field {char*}    t.contents - The actual contents of the node.
+ *  field {struct**} t.children - Node's child nodes.
+ * @return {long} x - Result of evaluation.
+ */
+long eval(mpc_ast_t* t) {
+
+  // If tagged as a number, return.
+  if (strstr(t->tag, "number")) {
+    return atoi(t->contents);
+  }
+
+  // Operator is always the second child.
+  char* op = t->children[1]->contents;
+
+  // Store third child
+  long x = eval(t->children[2]);
+
+  int i = 3;
+  while (strstr(t->children[i]->tag, "expr")) {
+    x = eval_op(x, op, eval(t->children[i]));
+    i++;
+  }
+  return x;
 }
