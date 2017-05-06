@@ -23,6 +23,8 @@ void add_history(char * unused) {}
 #include <editline/readline.h>
 #endif
 
+long eval_op(long x, char* op, long y);
+
 int main(int argc, char ** argv) {
 
   mpc_parser_t * Number = mpc_new("number");
@@ -64,4 +66,35 @@ int main(int argc, char ** argv) {
 
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
   return 0;
+}
+
+/*******************************************************************************
+ * eval_op
+ * Returns the result of performing given operator on given operands.
+ *
+ * @param {long}  x  - First operand.
+ * @param {char*} op - Desired operator.
+ * @param {long}  y  - Second operand.
+ * @return {long} result - The result of operation.
+ */
+long eval_op(long x, char* op, long y) {
+
+  long result = 0;
+
+  switch (*op) {
+    case '+':
+      result = x + y;
+      break;
+    case '-':
+      result = x - y;
+      break;
+    case '*':
+      result = x * y;
+      break;
+    case '/':
+      result = x / y;
+      break;
+  }
+
+  return result;
 }
