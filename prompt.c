@@ -32,6 +32,9 @@ typedef struct {
   int err;
 } lval;
 
+lval lval_num(long x);
+lval lval_err(int x);
+
 long eval_op(long x, char* op, long y);
 long eval(mpc_ast_t* t);
 
@@ -77,6 +80,34 @@ int main(int argc, char ** argv) {
 
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
   return 0;
+}
+
+/*******************************************************************************
+ * lval_num
+ * Constructs a _number_ type lval.
+ *
+ * @param {long} x -
+ * @return {lval} val -
+ */
+lval lval_num(long x) {
+  lval v;
+  v.type = LVAL_NUM;
+  v.num = x;
+  return v;
+}
+
+/*******************************************************************************
+ * lval_err
+ * Constructs an _error_ type lval.
+ *
+ * @param {int} x -
+ * @return {lval} val -
+ */
+lval lval_err(int x) {
+  lval v;
+  v.type = LVAL_ERR;
+  v.err = x;
+  return v;
 }
 
 /*******************************************************************************
