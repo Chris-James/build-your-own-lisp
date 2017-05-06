@@ -23,6 +23,9 @@ void add_history(char * unused) {}
 #include <editline/readline.h>
 #endif
 
+enum { LVAL_NUM, LVAL_ERR };
+enum { L_ERR_DIV_ZERO, L_ERR_BAD_OP, L_ERR_BAD_NUM };
+
 typedef struct {
   int type;
   long num;
