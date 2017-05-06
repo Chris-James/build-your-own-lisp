@@ -177,7 +177,7 @@ lval eval_op(lval x, char* op, lval y) {
       break;
     case '/':
       if (y.num == 0) {
-        return lval_err(L_ERR_DIV_ZERO);
+        return make_lval(LVAL_ERR, L_ERR_DIV_ZERO);
       } else {
         result /= y.num;
       }
@@ -203,11 +203,11 @@ lval eval_op(lval x, char* op, lval y) {
       }
       break;
     default:
-      return lval_err(L_ERR_BAD_OP);
+      return make_lval(LVAL_ERR, L_ERR_BAD_OP);
     break;
   }
 
-  return lval_num(result);
+  return make_lval(LVAL_NUM, result);
 }
 
 /*******************************************************************************
