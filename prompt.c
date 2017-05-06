@@ -34,10 +34,10 @@ int main(int argc, char ** argv) {
   mpc_parser_t * Lispy = mpc_new("lispy");
 
   mpca_lang(MPCA_LANG_DEFAULT,
-    " number  : /-?[0-9]+(\\.[0-9]+)?/;                \
-      operator: '+' | '-' | '*' | '/' | '%' | '^';     \
-      expr    : <number> | '(' <operator> <expr>+ ')'; \
-      lispy   : /^/ <operator> <expr>+ /$/;            \
+    " number  : /-?[0-9]+(\\.[0-9]+)?/;                             \
+      operator: '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/; \
+      expr    : <number> | '(' <operator> <expr>+ ')';              \
+      lispy   : /^/ <operator> <expr>+ /$/;                         \
     ",
     Number, Operator, Expr, Lispy
   );
@@ -103,6 +103,17 @@ long eval_op(long x, char* op, long y) {
       while (y > 1) {
         result *= x;
         y--;
+      }
+      break;
+    case 'm':
+      switch (*(op + 1)) {
+        // Operator is "min"
+        case 'i':
+          result = (y < result) ? y : x;
+          break;
+        case 'a':
+          // Operator is "max"
+          result = (y > result) ? y : x;
       }
       break;
   }
