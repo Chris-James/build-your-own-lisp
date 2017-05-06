@@ -225,7 +225,7 @@ lval eval(mpc_ast_t* t) {
   if (strstr(t->tag, "number")) {
     errno = 0;
     long x = strtol(t->contents, NULL, 10);
-    return errno != ERANGE ? lval_num(x) : lval_err(L_ERR_BAD_NUM);
+    return errno != ERANGE ? make_lval(LVAL_NUM, x) : make_lval(LVAL_ERR, L_ERR_BAD_NUM);
   }
 
   // Operator is always the second child.
