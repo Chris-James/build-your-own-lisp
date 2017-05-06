@@ -38,7 +38,7 @@ lval lval_err(int x);
 void lval_print(lval v);
 void lval_println(lval v);
 
-long eval_op(long x, char* op, long y);
+lval eval_op(lval x, char* op, lval y);
 long eval(mpc_ast_t* t);
 
 int main(int argc, char ** argv) {
@@ -158,51 +158,62 @@ void lval_println(lval v) {
  * eval_op
  * Returns the result of performing given operator on given operands.
  *
- * @param {long}  x  - First operand.
+ * @param {lval}  x  - First operand.
  * @param {char*} op - Desired operator.
- * @param {long}  y  - Second operand.
+ * @param {lval}  y  - Second operand.
  * @return {long} result - The result of operation.
  */
-long eval_op(long x, char* op, long y) {
+lval eval_op(lval x, char* op, lval y) {
 
-  long result = x;
+  // If either operand is an error, return operand
+  if (x.type == LVAL_ERR) { return x; }
+  if (y.type == LVAL_ERR) { return y; }
+
+  long result = x.num;
 
   switch (*op) {
     case '+':
-      result += y;
+      result += y.num;
       break;
     case '-':
-      result -= y;
+      result -= y.num;
       break;
     case '*':
-      result *= y;
+      result *= y.num;
       break;
     case '/':
-      result /= y;
+      if (y.num == 0) {
+        return lval_err(L_ERR_DIV_ZERO);
+      } else {
+        result /= y.num;
+      }
       break;
     case '%':
-      result %= y;
+      result %= y.num;
       break;
     case '^':
-      while (y > 1) {
-        result *= x;
-        y--;
+      while (y.num > 1) {
+        result *= x.num;
+        y.num--;
       }
       break;
     case 'm':
       switch (*(op + 1)) {
         // Operator is "min"
         case 'i':
-          result = (y < result) ? y : x;
+          result = (y.num < result) ? y.num : x.num;
           break;
         case 'a':
           // Operator is "max"
-          result = (y > result) ? y : x;
+          result = (y.num > result) ? y.num : x.num;
       }
       break;
+    default:
+      return lval_err(L_ERR_BAD_OP);
+    break;
   }
 
-  return result;
+  return lval_num(result);
 }
 
 /*******************************************************************************
