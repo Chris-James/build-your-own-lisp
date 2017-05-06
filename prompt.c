@@ -35,6 +35,9 @@ typedef struct {
 lval lval_num(long x);
 lval lval_err(int x);
 
+void lval_print(lval v);
+void lval_println(lval v);
+
 long eval_op(long x, char* op, long y);
 long eval(mpc_ast_t* t);
 
@@ -108,6 +111,47 @@ lval lval_err(int x) {
   v.type = LVAL_ERR;
   v.err = x;
   return v;
+}
+
+/*******************************************************************************
+ * lval_print
+ * Prints appropriate output message for given lval.
+ *
+ * @param {lval} v - The lval output.
+ *  field {int}  v.type [`LVAL_NUM`|`LVAL_ERR`] - The type of given lval.
+ *  field {long} v.num - Value of lval if it is of type `LVAL_NUM`.
+ *  field {int}  v.err - Type of error if lval is of type `LVAL_ERR`.
+ */
+void lval_print(lval v) {
+  switch (v.type) {
+    case LVAL_NUM:
+      printf("%li", v.num);
+    break;
+    case LVAL_ERR:
+      switch (v.err) {
+        case L_ERR_DIV_ZERO:
+          printf("Error: Division by zero");
+        break;
+        case L_ERR_BAD_OP:
+          printf("Error: Invalid Operator");
+        break;
+        case L_ERR_BAD_NUM:
+          printf("Error: Invalid Number");
+        break;
+      }
+    break;
+  }
+}
+
+/*******************************************************************************
+ * lval_println
+ * Prints an lval followed by newline.
+ *
+ * @param {lval} v - The lval to print.
+ */
+void lval_println(lval v) {
+  lval_print(v);
+  putchar('\n');
 }
 
 /*******************************************************************************
