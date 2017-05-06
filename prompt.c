@@ -170,6 +170,8 @@ lval eval_op(lval x, char* op, lval y) {
   if (x.type == LVAL_ERR) { return x; }
   if (y.type == LVAL_ERR) { return y; }
 
+  int error = 0;
+  int error_type;
   long result = x.num;
 
   switch (*op) {
@@ -184,7 +186,8 @@ lval eval_op(lval x, char* op, lval y) {
       break;
     case '/':
       if (y.num == 0) {
-        return make_lval(LVAL_ERR, L_ERR_DIV_ZERO);
+        error = 1;
+        error_type = L_ERR_DIV_ZERO;
       } else {
         result /= y.num;
       }
@@ -210,11 +213,12 @@ lval eval_op(lval x, char* op, lval y) {
       }
       break;
     default:
-      return make_lval(LVAL_ERR, L_ERR_BAD_OP);
+      error = 1;
+      error_type = L_ERR_BAD_OP;
     break;
   }
 
-  return make_lval(LVAL_NUM, result);
+  return error ? make_lval(LVAL_ERR, error_type) : make_lval(LVAL_NUM, result);
 }
 
 /*******************************************************************************
