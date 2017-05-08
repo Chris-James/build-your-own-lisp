@@ -240,8 +240,17 @@ lval eval(mpc_ast_t* t) {
   // If tagged as a number, return.
   if (strstr(t->tag, "number")) {
     errno = 0;
-    long x = strtol(t->contents, NULL, 10);
-    return errno != ERANGE ? make_lval(LVAL_NUM, x) : make_lval(LVAL_ERR, L_ERR_BAD_NUM);
+    value x;
+    int type;
+
+    x.num = strtol(t->contents, NULL, 10);
+    if (errno != ERANGE) {
+      type = LVAL_NUM;
+    } else {
+      type = LVAL_ERR;
+      x.err = L_ERR_BAD_NUM;
+     }
+     return make_lval(type, x);
   }
 
   // Operator is always the second child.
