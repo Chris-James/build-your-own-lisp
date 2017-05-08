@@ -24,9 +24,13 @@ void add_history(char * unused) {}
 #endif
 
 /**
+ * lval_types
  * Possible lval types
  */
-enum { LVAL_NUM, LVAL_ERR };
+enum lval_types {
+  LVAL_NUM,
+  LVAL_ERR
+};
 
 /**
  * Possible lval error types
