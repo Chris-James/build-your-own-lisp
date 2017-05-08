@@ -200,7 +200,10 @@ lval eval_op(lval x, char* op, lval y) {
       break;
     case '/':
       if (y.val.num == 0) {
+        // Error encountered
+        // ...update type of return lval
         type = LVAL_ERR;
+        // ...set error type of return lval
         result.err = L_ERR_DIV_ZERO;
       } else {
         result.num /= y.val.num;
@@ -217,8 +220,8 @@ lval eval_op(lval x, char* op, lval y) {
       break;
     case 'm':
       switch (*(op + 1)) {
-        // Operator is "min"
         case 'i':
+          // Operator is "min"
           result.num = (y.val.num < result.num) ? y.val.num : x.val.num;
           break;
         case 'a':
@@ -227,7 +230,10 @@ lval eval_op(lval x, char* op, lval y) {
       }
       break;
     default:
+      // Error encountered
+      // ...update type of return lval
       type = LVAL_ERR;
+      // ...set error type of return lval
       result.err = L_ERR_BAD_OP;
     break;
   }
