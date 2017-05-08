@@ -175,55 +175,55 @@ lval eval_op(lval x, char* op, lval y) {
   if (x.type == LVAL_ERR) { return x; }
   if (y.type == LVAL_ERR) { return y; }
 
-  int error = 0;
-  int error_type;
-  long result = x.num;
+  value result;
+  result.num = x.val.num;
+  int type = LVAL_NUM;
 
   switch (*op) {
     case '+':
-      result += y.num;
+      result.num += y.val.num;
       break;
     case '-':
-      result -= y.num;
+      result.num -= y.val.num;
       break;
     case '*':
-      result *= y.num;
+      result.num *= y.val.num;
       break;
     case '/':
-      if (y.num == 0) {
-        error = 1;
-        error_type = L_ERR_DIV_ZERO;
+      if (y.val.num == 0) {
+        type = LVAL_ERR;
+        result.err = L_ERR_DIV_ZERO;
       } else {
-        result /= y.num;
+        result.num /= y.val.num;
       }
       break;
     case '%':
-      result %= y.num;
+      result.num %= y.val.num;
       break;
     case '^':
-      while (y.num > 1) {
-        result *= x.num;
-        y.num--;
+      while (y.val.num > 1) {
+        result.num *= x.val.num;
+        y.val.num--;
       }
       break;
     case 'm':
       switch (*(op + 1)) {
         // Operator is "min"
         case 'i':
-          result = (y.num < result) ? y.num : x.num;
+          result.num = (y.val.num < result.num) ? y.val.num : x.val.num;
           break;
         case 'a':
           // Operator is "max"
-          result = (y.num > result) ? y.num : x.num;
+          result.num = (y.val.num > result.num) ? y.val.num : x.val.num;
       }
       break;
     default:
-      error = 1;
-      error_type = L_ERR_BAD_OP;
+      type = LVAL_ERR;
+      result.err = L_ERR_BAD_OP;
     break;
   }
 
-  return error ? make_lval(LVAL_ERR, error_type) : make_lval(LVAL_NUM, result);
+  return make_lval(type, result);
 }
 
 /*******************************************************************************
