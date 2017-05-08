@@ -33,9 +33,14 @@ enum lval_types {
 };
 
 /**
+ * lval_errors
  * Possible lval error types
  */
-enum { L_ERR_DIV_ZERO, L_ERR_BAD_OP, L_ERR_BAD_NUM };
+enum lval_errors {
+  L_ERR_DIV_ZERO,
+  L_ERR_BAD_OP,
+  L_ERR_BAD_NUM
+};
 
 /**
  * value
