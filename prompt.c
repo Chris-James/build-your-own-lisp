@@ -50,7 +50,7 @@ typedef struct {
   value val;
 } lval;
 
-lval make_lval(int type, long x);
+lval make_lval(int type, value x);
 
 void lval_print(lval v);
 void lval_println(lval v);
@@ -107,21 +107,14 @@ int main(int argc, char ** argv) {
  * Returns a valid lval for given type.
  *
  * @param {int} type [`LVAL_NUM`|`LVAL_ERR`] - Type of lval to construct.
- * @param {long} x - Number to assign lval if type is `LVAL_NUM`, else the
+ * @param {value} x - Number to assign lval if type is `LVAL_NUM`, else the
  *        appropriate error code for lval.
  * @return {lval} v - Valid number or error lval.
  */
-lval make_lval(int type, long x) {
+lval make_lval(int type, value x) {
   lval v;
   v.type = type;
-  switch (v.type) {
-    case LVAL_NUM:
-      v.num = x;
-    break;
-    case LVAL_ERR:
-      v.err = x;
-    break;
-  }
+  v.val = x;
   return v;
 }
 
