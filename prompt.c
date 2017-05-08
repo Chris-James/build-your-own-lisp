@@ -124,16 +124,17 @@ lval make_lval(int type, value x) {
  *
  * @param {lval} v - The lval output.
  *  field {int}  v.type [`LVAL_NUM`|`LVAL_ERR`] - The type of given lval.
- *  field {long} v.num - Value of lval if it is of type `LVAL_NUM`.
- *  field {int}  v.err - Type of error if lval is of type `LVAL_ERR`.
+ *  field {value} v.val - The value of given lval.
+ *  field {long} [v.val.num] - Value of lval if it is of type `LVAL_NUM`.
+ *  field {int}  [v.val.err] - Type of error if lval is of type `LVAL_ERR`.
  */
 void lval_print(lval v) {
   switch (v.type) {
     case LVAL_NUM:
-      printf("%li", v.num);
+      printf("%li", v.val.num);
     break;
     case LVAL_ERR:
-      switch (v.err) {
+      switch (v.val.err) {
         case L_ERR_DIV_ZERO:
           printf("Error: Division by zero");
         break;
