@@ -33,10 +33,21 @@ enum { LVAL_NUM, LVAL_ERR };
  */
 enum { L_ERR_DIV_ZERO, L_ERR_BAD_OP, L_ERR_BAD_NUM };
 
-typedef struct {
-  int type;
+/**
+ * value
+ * Potential content of an lval
+ */
+typedef union {
   long num;
   int err;
+} value;
+
+/**
+ * lval
+ */
+typedef struct {
+  int type;
+  value val;
 } lval;
 
 lval make_lval(int type, long x);
