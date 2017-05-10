@@ -29,7 +29,9 @@ void add_history(char * unused) {}
  */
 enum lval_types {
   LVAL_NUM,
-  LVAL_ERR
+  LVAL_ERR,
+  LVAL_SYM,
+  LVAL_SEXPR,
 };
 
 /**
