@@ -61,6 +61,7 @@ typedef union {
 typedef struct lval {
   int type;
   value val;
+  int count;
 } lval;
 
 lval make_lval(int type, value x);
