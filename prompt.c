@@ -515,3 +515,23 @@ lval* lval_eval_sexpr(lval* v) {
   lval_del(f);
   return result;
 }
+
+/*******************************************************************************
+ * lval_eval
+ * Returns the result of evaluating a valid lval.
+ *
+ * @param v - Pointer to the lval to evaluate.
+ * @return {lval*} result - Pointer to the result of evaluation.
+ */
+lval* lval_eval(lval* v) {
+  lval* result = v;
+  switch (v->type) {
+    case LVAL_SEXPR:
+      result = lval_eval_sexpr(v);
+    break;
+    default:
+      // All other lval types remain the same
+    break;
+  }
+  return result;
+}
