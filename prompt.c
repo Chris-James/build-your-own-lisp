@@ -243,9 +243,9 @@ void lval_print(lval* v) {
  * lval_println
  * Prints an lval followed by newline.
  *
- * @param {lval} v - The lval to print.
+ * @param v - Pointer to the lval to print.
  */
-void lval_println(lval v) {
+void lval_println(lval* v) {
   lval_print(v);
   putchar('\n');
 }
