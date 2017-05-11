@@ -58,7 +58,7 @@ typedef union {
 /**
  * lval
  */
-typedef struct {
+typedef struct lval {
   int type;
   value val;
 } lval;
