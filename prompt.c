@@ -195,13 +195,11 @@ lval* lval_add(lval* s_expr, lval* new_lval) {
 
 /*******************************************************************************
  * lval_print
- * Prints appropriate output message for given lval.
+ * Prints appropriate output for a given lval.
  *
- * @param {lval} v - The lval output.
- *  field {int}  v.type [`LVAL_NUM`|`LVAL_ERR`] - The type of given lval.
- *  field {value} v.val - The value of given lval.
- *  field {long} [v.val.num] - Value of lval if it is of type `LVAL_NUM`.
- *  field {int}  [v.val.err] - Type of error if lval is of type `LVAL_ERR`.
+ * @param v - The lval.
+ *  field {int} v.type - The type of given lval.
+ *  field {value} v.val - The "raw" value of given lval.
  */
 void lval_print(lval* v) {
   switch (v->type) {
