@@ -235,7 +235,7 @@ void lval_println(lval v) {
   putchar('\n');
 }
 
-/*
+/*******************************************************************************
  * get_lval_tag
  * Returns a node's tag's corresponding lval type.
  *
