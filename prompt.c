@@ -101,8 +101,9 @@ int main(int argc, char ** argv) {
 
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
       // Evaluate input and print result
-      lval result = eval(r.output);
+      lval* result = lval_eval(lval_read(r.output));
       lval_println(result);
+      lval_del(result);
       mpc_ast_delete(r.output);
     } else {
       // Error encountered
