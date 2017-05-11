@@ -375,3 +375,95 @@ lval* lval_take(lval* v, int i) {
   lval_del(v);
   return x;
 }
+
+/*******************************************************************************
+ * builtin_op
+ * Evaluates given lval according to given operator.
+ *
+ * @param a - The lval to evaluate.
+ * @param op - The operation to perform.
+ * @return {loval*} - The resulting expression.
+ */
+lval* builtin_op(lval* a, char* op) {
+
+  // Ensure all arguments are numbers
+  for (int i = 0; i < a->count; i++) {
+    if (a->val.cell[i]->type != LVAL_NUM) {
+      lval_del(a);
+      value v;
+      v.err = L_ERR_BAD_NUM;
+      return make_lval(LVAL_ERR, v);
+    }
+  }
+
+  // Pop first element
+  lval* x = lval_pop(a, 0);
+  value result = x->val;
+
+  // If subtraction operator & no arguments - perform unary negation
+  if ((strcmp(op, "-") == 0) && a->count == 0) {
+    x->val.num = -x->val.num;
+  }
+
+  /* While there are still elements remaining */
+  while (a->count > 0) {
+
+    /* Pop the next element */
+    lval* y = lval_pop(a, 0);
+
+    switch (*op) {
+      case '+':
+        x->val.num += y->val.num;
+      break;
+      case '-':
+        x->val.num -= y->val.num;
+      break;
+      case '*':
+        x->val.num *= y->val.num;
+      break;
+      case '/':
+        if (y->val.num == 0) {
+          lval_del(x);
+          value v;
+          v.err = L_ERR_DIV_ZERO;
+          x = make_lval(LVAL_ERR, v);
+          break;
+        } else {
+          x->val.num /= y->val.num;
+        }
+      break;
+      case '%':
+        x->val.num %= y->val.num;
+      break;
+      case '^':
+        if (y->val.num == 0) {
+          result.num = 1;
+        } else if (y->val.num == 1) {
+          continue;
+        } else {
+          while (y->val.num > 1) {
+            result.num *= x->val.num;
+            y->val.num--;
+          }
+        }
+        x->val.num = result.num;
+      break;
+      case 'm':
+        switch (*(op + 1)) {
+          case 'i':
+            // Operator is "min"
+            result.num = (y->val.num < result.num) ? y->val.num : x->val.num;
+          break;
+          case 'a':
+            // Operator is "max"
+            result.num = (y->val.num > result.num) ? y->val.num : x->val.num;
+          break;
+        }
+        x->val = result;
+      break;
+    }
+    lval_del(y);
+  }
+  lval_del(a);
+  return x;
+}
