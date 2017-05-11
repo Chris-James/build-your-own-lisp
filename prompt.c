@@ -361,3 +361,17 @@ lval* lval_pop(lval* v, int i) {
 
   return x;
 }
+
+/*******************************************************************************
+ * lval_take
+ * Extracts a single element from given S-Expression and deletes the source lval.
+ *
+ * @param v - The S-Expression containing the desired element.
+ * @param i - The position of the desired element.
+ * @return {lval*} x - Pointer to the extracted lval.
+ */
+lval* lval_take(lval* v, int i) {
+  lval* x = lval_pop(v, i);
+  lval_del(v);
+  return x;
+}
