@@ -66,6 +66,7 @@ typedef struct lval {
 
 lval* make_lval(int type, value x);
 void lval_del(lval* v);
+lval* lval_add(lval* s_expr, lval* new_lval);
 
 void lval_print(lval v);
 void lval_println(lval v);
@@ -174,6 +175,22 @@ void lval_del(lval* v) {
 
   // Free memory allocated for lval itself
   free(v);
+}
+
+/*******************************************************************************
+ * lval_add
+ * Appends an lval to the given S-Expression's list of lvals.
+ *
+ * @param s_expr - Pointer to the S-Expression being updated.
+ * @param new_lval - Pointer to the lval to append.
+ *
+ * @return s_expr - Pointer to the updated S-Expression lval.
+ */
+lval* lval_add(lval* s_expr, lval* new_lval) {
+  s_expr->count++;
+  s_expr->val.cell = realloc(s_expr->val.cell, (sizeof(lval*) * s_expr->count));
+  s_expr->val.cell[(s_expr->count - 1)] = new_lval;
+  return s_expr;
 }
 
 /*******************************************************************************
