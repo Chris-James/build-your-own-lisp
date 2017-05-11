@@ -333,42 +333,31 @@ lval* lval_read(mpc_ast_t* t) {
 }
 
 /*******************************************************************************
- * eval
+ * lval_pop
+ * Extracts a single element from given S-Expression.
  *
- * @param {struct*}  t     - The node to evaluate.
- *  field {char*}    t.tag - The rules used to parse node.
- *  field {char*}    t.contents - The actual contents of the node.
- *  field {struct**} t.children - Node's child nodes.
- * @return {lval} x - Result of evaluation.
+ * @desc lval_pop extracts a single element from an S-Expression at index `i`
+ * and shifts the rest of the list backward so that it no longer contains that
+ * lval*. It then returns the extracted value.
+ *
+ * @param v - The S-Expression containing the desired element.
+ * @param i - The position of the element to extract.
+ *
+ * @return {lval*} x - The extracted lval.
  */
-lval eval(mpc_ast_t* t) {
+lval* lval_pop(lval* v, int i) {
 
-  // If tagged as a number, return.
-  if (strstr(t->tag, "number")) {
-    errno = 0;
-    value x;
-    int type;
+  // Find the item at index `i`
+  lval* x = v->val.cell[i];
 
-    x.num = strtol(t->contents, NULL, 10);
-    if (errno != ERANGE) {
-      type = LVAL_NUM;
-    } else {
-      type = LVAL_ERR;
-      x.err = L_ERR_BAD_NUM;
-     }
-     return make_lval(type, x);
-  }
+  // Shift memory after the item at `i` over the top
+  memmove(&v->val.cell[i], &v->val.cell[(i + 1)], sizeof(lval*) * (v->count-i-1));
 
-  // Operator is always the second child.
-  char* op = t->children[1]->contents;
+  // Decrease the count of items in the list
+  v->count--;
 
-  // Store third child
-  lval x = eval(t->children[2]);
+  // Reallocate the memory used
+  v->val.cell = realloc(v->val.cell, sizeof(lval*) * v->count);
 
-  int i = 3;
-  while (strstr(t->children[i]->tag, "expr")) {
-    x = eval_op(x, op, eval(t->children[i]));
-    i++;
-  }
   return x;
 }
