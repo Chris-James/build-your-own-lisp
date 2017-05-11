@@ -64,7 +64,7 @@ typedef struct lval {
   int count;
 } lval;
 
-lval make_lval(int type, value x);
+lval* make_lval(int type, value x);
 
 void lval_print(lval v);
 void lval_println(lval v);
@@ -127,20 +127,20 @@ int main(int argc, char ** argv) {
  *        appropriate error code for lval.
  * @return {lval} v - Valid number or error lval.
  */
-lval make_lval(int type, value x) {
-  lval v;
-  v.type = type;
+lval* make_lval(int type, value x) {
+  lval* v = malloc(sizeof(lval));
+  v->type = type;
   switch (type) {
     case LVAL_SYM:
-      v.val.sym = malloc(strlen(x.sym) + 1);
-      strcpy(v.val.sym, x.sym);
+      v->val.sym = malloc(strlen(x.sym) + 1);
+      strcpy(v->val.sym, x.sym);
     break;
     case LVAL_SEXPR:
-      v.count = 0;
-      v.val.cell = NULL;
+      v->count = 0;
+      v->val.cell = NULL;
     break;
     default:
-      v.val = x;
+      v->val = x;
     break;
   }
   return v;
