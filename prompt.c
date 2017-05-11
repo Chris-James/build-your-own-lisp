@@ -51,6 +51,8 @@ enum lval_errors {
 typedef union {
   long num;
   int err;
+  char* sym;
+  struct lval** cell;
 } value;
 
 /**
