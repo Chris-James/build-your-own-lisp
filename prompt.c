@@ -221,6 +221,23 @@ void lval_print(lval* v) {
         break;
       }
     break;
+    case LVAL_SYM:
+      printf("%s", v->val.sym);
+    break;
+    case LVAL_SEXPR:
+      putchar('(');
+      for (int i = 0; i < v->count; i++) {
+
+        /* Print Value contained within */
+        lval_print(v->val.cell[i]);
+
+        /* Don't print trailing space if last element */
+        if (i != (v->count-1)) {
+          putchar(' ');
+        }
+      }
+      putchar(')');
+    break;
   }
 }
 
