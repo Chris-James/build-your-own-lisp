@@ -69,7 +69,7 @@ void lval_del(lval* v);
 lval* lval_add(lval* s_expr, lval* new_lval);
 lval* lval_read(mpc_ast_t* t);
 
-void lval_print(lval v);
+void lval_print(lval* v);
 void lval_println(lval v);
 
 lval eval(mpc_ast_t* t);
@@ -203,13 +203,13 @@ lval* lval_add(lval* s_expr, lval* new_lval) {
  *  field {long} [v.val.num] - Value of lval if it is of type `LVAL_NUM`.
  *  field {int}  [v.val.err] - Type of error if lval is of type `LVAL_ERR`.
  */
-void lval_print(lval v) {
-  switch (v.type) {
+void lval_print(lval* v) {
+  switch (v->type) {
     case LVAL_NUM:
-      printf("%li", v.val.num);
+      printf("%li", v->val.num);
     break;
     case LVAL_ERR:
-      switch (v.val.err) {
+      switch (v->val.err) {
         case L_ERR_DIV_ZERO:
           printf("Error: Division by zero");
         break;
