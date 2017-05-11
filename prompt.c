@@ -65,6 +65,7 @@ typedef struct lval {
 } lval;
 
 lval* make_lval(int type, value x);
+void lval_del(lval* v);
 
 void lval_print(lval v);
 void lval_println(lval v);
@@ -143,6 +144,36 @@ lval* make_lval(int type, value x) {
     break;
   }
   return v;
+}
+
+/*******************************************************************************
+ * lval_del
+ * Delete an lval by freeing all allocated memory associated with lval & fields.
+ *
+ * @param v - Pointer to the lval to delete.
+ */
+void lval_del(lval* v) {
+
+  switch (v->type) {
+    case LVAL_SYM:
+      // If symbol free the string data
+      free(v->val.sym);
+    break;
+    case LVAL_SEXPR:
+      // If S-Expression delete all elements inside
+      for (int i = 0; i < v->count; i++) {
+        lval_del(v->val.cell[i]);
+      }
+      // Free memory allocated to contain the pointers
+      free(v->val.cell);
+    break;
+    case LVAL_NUM:
+    case LVAL_ERR:
+    break;
+  }
+
+  // Free memory allocated for lval itself
+  free(v);
 }
 
 /*******************************************************************************
