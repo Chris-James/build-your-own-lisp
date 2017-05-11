@@ -467,3 +467,51 @@ lval* builtin_op(lval* a, char* op) {
   lval_del(a);
   return x;
 }
+
+/*******************************************************************************
+ * lval_eval_sexpr
+ * Evaluates a valid S-Expression.
+ *
+ * @desc We first evaluate all the children of the S-Expression. If any of these
+ * children are errors we return the first error we encounter. If the S-Expression
+ * has no children we just return it directly. If the S-Expression has a single
+ * child that child is returned. Otherwise, we ensure the first child is a valid
+ * symbol and, if so, perform the desired operation and return the result.
+ *
+ * @param v - Pointer to the S-Expression to evaluate.
+ *
+ * @return {lval*} - Pointer to the result of evaluation.
+ */
+lval* lval_eval_sexpr(lval* v) {
+
+  // Evaluate children
+  for (int i = 0; i < v->count; i++) {
+
+    v->val.cell[i] = lval_eval(v->val.cell[i]);
+
+    // Perform error check
+    if (v->val.cell[i]->type == LVAL_ERR) { return lval_take(v, i); }
+  }
+
+  // Empty expression
+  if (v->count == 0) { return v; }
+
+  // Single expression
+  if (v->count == 1) { return lval_take(v, 0); }
+
+  // Ensure that first element is symbol, else return BAD_OP error
+  lval* f = lval_pop(v, 0);
+  if (f->type != LVAL_SYM) {
+    lval_del(f);
+    lval_del(v);
+    value v;
+    v.err = L_ERR_BAD_OP;
+    return make_lval(LVAL_ERR, v);
+  }
+
+  // Call builtin with operator
+  lval* result = builtin_op(v, f->val.sym);
+
+  lval_del(f);
+  return result;
+}
