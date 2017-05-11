@@ -81,7 +81,7 @@ int main(int argc, char ** argv) {
 
   mpca_lang(MPCA_LANG_DEFAULT,
     " number  : /-?[0-9]+(\\.[0-9]+)?/;                           \
-      symbol: '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/ | \"head\"; \
+      symbol: '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/ | \"head\" | \"tail\"; \
       expr    : <number> | <symbol> | <sexpr>;                    \
       sexpr   : '(' <expr>* ')';                                  \
       lispy   : /^/ <expr>* /$/;                                  \
@@ -460,6 +460,9 @@ lval* builtin_op(lval* a, char* op) {
         x->val = result;
       break;
       case 'h':
+      break;
+      case 't':
+        x->val = y->val;
       break;
     }
     lval_del(y);
