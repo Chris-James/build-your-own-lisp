@@ -67,11 +67,11 @@ typedef struct lval {
 lval* make_lval(int type, value x);
 void lval_del(lval* v);
 lval* lval_add(lval* s_expr, lval* new_lval);
+lval* lval_read(mpc_ast_t* t);
 
 void lval_print(lval v);
 void lval_println(lval v);
 
-lval eval_op(lval x, char* op, lval y);
 lval eval(mpc_ast_t* t);
 
 int main(int argc, char ** argv) {
@@ -254,75 +254,67 @@ int get_lval_tag(char* t) {
 }
 
 /*******************************************************************************
- * eval_op
- * Returns the result of performing given operator on given operands.
+ * lval_read
+ * Converts an ast node to a valid Lispy lval.
  *
- * @param {lval}  x  - First operand.
- * @param {char*} op - Desired operator.
- * @param {lval}  y  - Second operand.
- * @return {lval} result - The result of operation.
+ * @param t - The node to evaluate.
+ *  field {char*} t.tag - The rule used to parse node.
+ *  field {char*} t.contents - The actual contents of the node.
+ *  field {struct**} t.children - Node's child nodes.
+ * @return {lval*} x - Pointer to lval constructed for given node.
  */
-lval eval_op(lval x, char* op, lval y) {
+lval* lval_read(mpc_ast_t* t) {
 
-  // If either operand is an error, return operand
-  if (x.type == LVAL_ERR) { return x; }
-  if (y.type == LVAL_ERR) { return y; }
+  value v;
+  int type = LVAL_ERR;
 
-  value result;
-  result.num = x.val.num;
-  int type = LVAL_NUM;
+  int tag = get_lval_tag(t->tag);
+  switch (tag) {
 
-  switch (*op) {
-    case '+':
-      result.num += y.val.num;
-      break;
-    case '-':
-      result.num -= y.val.num;
-      break;
-    case '*':
-      result.num *= y.val.num;
-      break;
-    case '/':
-      if (y.val.num == 0) {
-        // Error encountered
-        // ...update type of return lval
-        type = LVAL_ERR;
-        // ...set error type of return lval
-        result.err = L_ERR_DIV_ZERO;
+    // Node is a number
+    case LVAL_NUM:
+      // ...attempt conversion from string to long integer
+      errno = 0;
+      v.num = strtol(t->contents, NULL, 10);
+      if (errno != ERANGE) {
+        // ...conversion successful, set type of value to NUM
+        type = LVAL_NUM;
       } else {
-        result.num /= y.val.num;
+        // ...something went wrong, set type of value to ERR
+        type = LVAL_ERR;
+        v.err = L_ERR_BAD_NUM;
       }
-      break;
-    case '%':
-      result.num %= y.val.num;
-      break;
-    case '^':
-      while (y.val.num > 1) {
-        result.num *= x.val.num;
-        y.val.num--;
-      }
-      break;
-    case 'm':
-      switch (*(op + 1)) {
-        case 'i':
-          // Operator is "min"
-          result.num = (y.val.num < result.num) ? y.val.num : x.val.num;
-          break;
-        case 'a':
-          // Operator is "max"
-          result.num = (y.val.num > result.num) ? y.val.num : x.val.num;
-      }
-      break;
-    default:
-      // Error encountered
-      // ...update type of return lval
-      type = LVAL_ERR;
-      // ...set error type of return lval
-      result.err = L_ERR_BAD_OP;
+    break;
+
+    // Node is a symbol
+    case LVAL_SYM:
+      // ...set type & value of lval
+      type = LVAL_SYM;
+      v.sym = t->contents;
+    break;
+
+    // Node is root or s-expression
+    case LVAL_SEXPR:
+      // ...set type & value of lval
+      type = LVAL_SEXPR;
+      // Set `v` to arbitrary value
+      // V's value doesn't matter - it's ignored in `make_lval()` for s-expressions.
+      v.num = 0;
     break;
   }
 
-  return make_lval(type, result);
+  // Package type and "raw" value as an lval
+  lval* x = make_lval(type, v);
+
+  // Convert child nodes to lvals & append to new lval
+  for (int i = 0; i < t->children_num; i++) {
+    if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
+    if (strcmp(t->children[i]->tag,  "regex") == 0) { continue; }
+    x = lval_add(x, lval_read(t->children[i]));
+  }
+
+  return x;
 }
 
 /*******************************************************************************
