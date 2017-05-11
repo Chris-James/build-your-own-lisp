@@ -120,12 +120,11 @@ int main(int argc, char ** argv) {
 
 /*******************************************************************************
  * make_lval
- * Returns a valid lval for given type.
+ * Packages a given type and "raw" value as a valid lval.
  *
- * @param {int} type [`LVAL_NUM`|`LVAL_ERR`] - Type of lval to construct.
- * @param {value} x - Number to assign lval if type is `LVAL_NUM`, else the
- *        appropriate error code for lval.
- * @return {lval} v - Valid number or error lval.
+ * @param {int} type [`LVAL_{NUM|ERR|SYM|SEXPR}`] - Type of lval to construct.
+ * @param {value} x - The "raw" value of lval.
+ * @return {lval*} v - Pointer to valid lval.
  */
 lval* make_lval(int type, value x) {
   lval* v = malloc(sizeof(lval));
