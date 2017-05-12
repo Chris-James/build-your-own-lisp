@@ -281,6 +281,7 @@ int get_lval_tag(char* t) {
   int tag;
   if (strstr(t, "number")) { tag = LVAL_NUM; }
   if (strstr(t, "symbol")) { tag = LVAL_SYM; }
+  if (strstr(t, "qexpr")) { tag = LVAL_QEXPR; }
   if (strcmp(t, ">") == 0 || strstr(t, "sexpr")) { tag = LVAL_SEXPR; }
   return tag;
 }
