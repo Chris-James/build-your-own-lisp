@@ -334,6 +334,14 @@ lval* lval_read(mpc_ast_t* t) {
       // V's value doesn't matter - it's ignored in `make_lval()` for s-expressions.
       v.num = 0;
     break;
+
+    case LVAL_QEXPR:
+      // ...set type & value of lval
+      type = LVAL_QEXPR;
+      // Set `v` to arbitrary value
+      // V's value doesn't matter - it's ignored in `make_lval()` for s-expressions.
+      v.num = 0;
+    break;
   }
 
   // Package type and "raw" value as an lval
