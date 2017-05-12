@@ -32,6 +32,7 @@ enum lval_types {
   LVAL_ERR,
   LVAL_SYM,
   LVAL_SEXPR,
+  LVAL_QEXPR
 };
 
 /**
