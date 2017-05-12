@@ -162,8 +162,9 @@ void lval_del(lval* v) {
       // If symbol free the string data
       free(v->val.sym);
     break;
+    case LVAL_QEXPR:
     case LVAL_SEXPR:
-      // If S-Expression delete all elements inside
+      // If S-Expression or Q-Expression delete all elements inside
       for (int i = 0; i < v->count; i++) {
         lval_del(v->val.cell[i]);
       }
