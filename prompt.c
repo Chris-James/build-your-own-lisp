@@ -289,6 +289,18 @@ int get_lval_tag(char* t) {
 }
 
 /*******************************************************************************
+ * is_delimiter
+ * Returns 1 if given string is a delimiter.
+ *
+ * @param content - Pointer to string to be cheked.
+ *
+ * @return 1 if given string matches a delimiter
+ */
+int is_delimiter(char* content) {
+  return !strcmp(content, "(") || !strcmp(content, ")") || !strcmp(content, "{") || !strcmp(content, "}");
+}
+
+/*******************************************************************************
  * lval_read
  * Converts an ast node to a valid Lispy lval.
  *
@@ -351,10 +363,7 @@ lval* lval_read(mpc_ast_t* t) {
 
   // Convert child nodes to lvals & append to new lval
   for (int i = 0; i < t->children_num; i++) {
-    if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
-    if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
-    if (strcmp(t->children[i]->contents, "{") == 0) { continue; }
-    if (strcmp(t->children[i]->contents, "}") == 0) { continue; }
+    if (is_delimiter(t->children[i]->contents)) { continue; }
     if (strcmp(t->children[i]->tag,  "regex") == 0) { continue; }
     x = lval_add(x, lval_read(t->children[i]));
   }
