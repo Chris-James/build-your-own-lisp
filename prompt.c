@@ -71,6 +71,7 @@ lval* lval_add(lval* s_expr, lval* new_lval);
 lval* lval_read(mpc_ast_t* t);
 void lval_println(lval* v);
 lval* lval_eval(lval* v);
+void lval_print(lval* v);
 
 int main(int argc, char ** argv) {
 
@@ -197,6 +198,31 @@ lval* lval_add(lval* s_expr, lval* new_lval) {
 }
 
 /*******************************************************************************
+ * print_expr
+ * Prints an S or Q-Expression lval.
+ *
+ * @param v - Pointer to the lval to be printed.
+ */
+void print_expr(lval* v) {
+
+  char open = (v->type == LVAL_SEXPR) ? '(' : '{';
+  char close = (v->type == LVAL_SEXPR) ? ')' : '}';
+
+  putchar(open);
+  for (int i = 0; i < v->count; i++) {
+
+    // Print value contained within
+    lval_print(v->val.cell[i]);
+
+    // Don't print trailing space if last element
+    if (i != (v->count - 1)) {
+      putchar(' ');
+    }
+  }
+  putchar(close);
+}
+
+/*******************************************************************************
  * lval_print
  * Prints appropriate output for a given lval.
  *
@@ -226,32 +252,8 @@ void lval_print(lval* v) {
       printf("%s", v->val.sym);
     break;
     case LVAL_SEXPR:
-      putchar('(');
-      for (int i = 0; i < v->count; i++) {
-
-        /* Print Value contained within */
-        lval_print(v->val.cell[i]);
-
-        /* Don't print trailing space if last element */
-        if (i != (v->count-1)) {
-          putchar(' ');
-        }
-      }
-      putchar(')');
-    break;
     case LVAL_QEXPR:
-      putchar('{');
-      for (int i = 0; i < v->count; i++) {
-
-        /* Print Value contained within */
-        lval_print(v->val.cell[i]);
-
-        /* Don't print trailing space if last element */
-        if (i != (v->count-1)) {
-          putchar(' ');
-        }
-      }
-      putchar('}');
+      print_expr(v);
     break;
   }
 }
