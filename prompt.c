@@ -137,6 +137,7 @@ lval* make_lval(int type, value x) {
       v->val.sym = malloc(strlen(x.sym) + 1);
       strcpy(v->val.sym, x.sym);
     break;
+    case LVAL_QEXPR:
     case LVAL_SEXPR:
       v->count = 0;
       v->val.cell = NULL;
