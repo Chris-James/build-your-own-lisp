@@ -513,6 +513,28 @@ lval* builtin_op(lval* a, char* op) {
 }
 
 /*******************************************************************************
+ * builtin
+ * Determines if given function is a builtin command, executes it if so.
+ *
+ * @param a - Pointer to the lval to necessary to execute command.
+ * @param func - Pointer to the name of the command to check for/execute.
+ *
+ * @return - Pointer to resulting lval or error lval.
+ */
+lval* builtin(lval* a, char* func) {
+
+  // If given function matches a builtin operation, perform operation
+  if (strstr("+-/*", func)) {
+    return builtin_op(a, func);
+  }
+
+  lval_del(a);
+  value e;
+  e.err = L_ERR_BAD_OP;
+  return make_lval(LVAL_ERR, e);
+}
+
+/*******************************************************************************
  * lval_eval_sexpr
  * Evaluates a valid S-Expression.
  *
@@ -554,7 +576,7 @@ lval* lval_eval_sexpr(lval* v) {
   }
 
   // Call builtin with operator
-  lval* result = builtin_op(v, f->val.sym);
+  lval* result = builtin(v, f->val.sym);
 
   lval_del(f);
   return result;
