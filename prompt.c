@@ -70,9 +70,10 @@ lval* builtin_head(lval*);
 lval* builtin_tail(lval*);
 lval* builtin_list(lval*);
 lval* builtin_eval(lval*);
+lval* builtin_init(lval*);
 
-char *builtin_names[] = { "head", "tail", "list", "eval", NULL };
-lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, NULL };
+char *builtin_names[] = { "head", "tail", "list", "eval", "init", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, NULL };
 
 int main(int argc, char ** argv) {
 
@@ -84,13 +85,13 @@ int main(int argc, char ** argv) {
   mpc_parser_t * Lispy = mpc_new("lispy");
 
   mpca_lang(MPCA_LANG_DEFAULT,
-    " number : /-?[0-9]+(\\.[0-9]+)?/;                            \
-      symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/ \
-             | \"head\" | \"tail\" | \"list\" | \"eval\";         \
-      expr   : <number> | <symbol> | <sexpr> | <qexpr>;           \
-      sexpr  : '(' <expr>* ')';                                   \
-      qexpr  : '{' <expr>* '}';                                   \
-      lispy  : /^/ <expr>* /$/;                                   \
+    " number : /-?[0-9]+(\\.[0-9]+)?/;                               \
+      symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/    \
+             | \"head\" | \"tail\" | \"list\" | \"eval\" | \"init\"; \
+      expr   : <number> | <symbol> | <sexpr> | <qexpr>;              \
+      sexpr  : '(' <expr>* ')';                                      \
+      qexpr  : '{' <expr>* '}';                                      \
+      lispy  : /^/ <expr>* /$/;                                      \
     ",
     Number, Symbol, Expr, Sexpr, Qexpr, Lispy
   );
@@ -727,4 +728,20 @@ lval* builtin_eval(lval* a) {
   x->type = LVAL_SEXPR;
 
   return lval_eval(x);
+}
+
+/*******************************************************************************
+ * builtin_init
+ * Returns all elements in given Q-Expression except the last.
+ *
+ * @param a - Pointer to the Q-Expression to operate on.
+ *
+ * @return - Pointer to the list of remaining elements.
+ */
+lval* builtin_init(lval* a) {
+
+  // Take first argument
+  lval* v = lval_take(a, 0);
+  lval_del(lval_pop(v, (v->count - 1)));
+  return v;
 }
