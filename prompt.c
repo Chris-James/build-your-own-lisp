@@ -71,9 +71,10 @@ lval* builtin_tail(lval*);
 lval* builtin_list(lval*);
 lval* builtin_eval(lval*);
 lval* builtin_init(lval*);
+lval* builtin_cons(lval*);
 
-char *builtin_names[] = { "head", "tail", "list", "eval", "init", NULL };
-lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, NULL };
+char *builtin_names[] = { "head", "tail", "list", "eval", "init", "cons", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, builtin_cons, NULL };
 
 int main(int argc, char ** argv) {
 
@@ -87,7 +88,8 @@ int main(int argc, char ** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     " number : /-?[0-9]+(\\.[0-9]+)?/;                               \
       symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/    \
-             | \"head\" | \"tail\" | \"list\" | \"eval\" | \"init\"; \
+             | \"head\" | \"tail\" | \"list\" | \"eval\" | \"init\"  \
+             | \"cons\";                                             \
       expr   : <number> | <symbol> | <sexpr> | <qexpr>;              \
       sexpr  : '(' <expr>* ')';                                      \
       qexpr  : '{' <expr>* '}';                                      \
@@ -744,4 +746,36 @@ lval* builtin_init(lval* a) {
   lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, (v->count - 1)));
   return v;
+}
+
+/*******************************************************************************
+ * builtin_cons
+ * Appends given value to the front of given Q-Expression.
+ *
+ * @param args - The value (at index 0) & Q-Expression (at index 1) to concatenate.
+ *
+ * @return new_q - Pointer to newly constructed Q-Expression.
+ *
+ * @example
+ *
+ * cons 1 {2 3 4}
+ * // => {1 2 3 4}
+ */
+lval* builtin_cons(lval* args) {
+
+  // Create new Q-Expression with a dummy value
+  value _;
+  _.num = 0;
+  lval * new_q = make_lval(LVAL_QEXPR, _);
+
+  // Append given value to new Q-Expression
+  new_q = lval_add(new_q, lval_pop(args, 0));
+
+  // Append elements in given Q-Expression to new Q-Expression
+  lval* r = lval_eval(lval_take(args, 0));
+  while (r->count) {
+    new_q = lval_add(new_q, lval_pop(r, 0));
+  }
+
+  return new_q;
 }
