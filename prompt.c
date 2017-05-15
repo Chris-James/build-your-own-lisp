@@ -79,9 +79,10 @@ void lval_print(lval* v);
 lval* builtin_head(lval*);
 lval* builtin_tail(lval*);
 lval* builtin_list(lval*);
+lval* builtin_eval(lval*);
 
-char *builtin_names[] = { "head", "tail", "list", NULL };
-lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, NULL };
+char *builtin_names[] = { "head", "tail", "list", "eval", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, NULL };
 
 int main(int argc, char ** argv) {
 
@@ -95,7 +96,7 @@ int main(int argc, char ** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     " number : /-?[0-9]+(\\.[0-9]+)?/;                            \
       symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/ \
-             | \"head\" | \"tail\" | \"list\";                    \
+             | \"head\" | \"tail\" | \"list\" | \"eval\";         \
       expr   : <number> | <symbol> | <sexpr> | <qexpr>;           \
       sexpr  : '(' <expr>* ')';                                   \
       qexpr  : '{' <expr>* '}';                                   \
@@ -732,4 +733,39 @@ lval* builtin_tail(lval* a) {
 lval* builtin_list(lval* a) {
   a->type = LVAL_QEXPR;
   return a;
+}
+
+/*******************************************************************************
+ * builtin_eval
+ * Evaluates a given Q-Expression.
+ *
+ * @desc Takes as input some single Q-Expression, which it converts to an
+ * S-Expression, and evaluates using lval_eval.
+ *
+ * @param a - Pointer to the Q-Expression to convert & evaluate.
+ *
+ * @return a - Pointer to the lval resulting from evaluation.
+ */
+lval* builtin_eval(lval* a) {
+  // Check errors
+  // ...too many args passed
+  if (a->count != 1) {
+    lval_del(a);
+    value e;
+    e.err = L_ERR_ARG_COUNT;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  // ...invalid expression passed
+  if (a->val.cell[0]->type != LVAL_QEXPR) {
+    lval_del(a);
+    value e;
+    e.err = L_ERR_BAD_TYPE;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  lval* x = lval_take(a, 0);
+  x->type = LVAL_SEXPR;
+
+  return lval_eval(x);
 }
