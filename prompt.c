@@ -42,7 +42,10 @@ enum lval_types {
 enum lval_errors {
   L_ERR_DIV_ZERO,
   L_ERR_BAD_OP,
-  L_ERR_BAD_NUM
+  L_ERR_BAD_NUM,
+  L_ERR_BAD_TYPE,
+  L_ERR_EMPTY_Q,
+  L_ERR_ARG_COUNT
 };
 
 /**
@@ -250,6 +253,15 @@ void lval_print(lval* v) {
         break;
         case L_ERR_BAD_NUM:
           printf("Error: Invalid Number");
+        break;
+        case L_ERR_ARG_COUNT:
+          printf("Error: Function passed too many arguments");
+        break;
+        case L_ERR_BAD_TYPE:
+          printf("Error: Function passed incorrect type");
+        break;
+        case L_ERR_EMPTY_Q:
+          printf("Error: Function passed {}");
         break;
       }
     break;
