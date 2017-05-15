@@ -73,6 +73,11 @@ void lval_println(lval* v);
 lval* lval_eval(lval* v);
 void lval_print(lval* v);
 
+lval* builtin_head(lval*);
+
+char *builtin_names[] = { "head", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, NULL };
+
 int main(int argc, char ** argv) {
 
   mpc_parser_t * Number = mpc_new("number");
@@ -600,4 +605,48 @@ lval* lval_eval(lval* v) {
     break;
   }
   return result;
+}
+
+/*******************************************************************************
+ * builtin_head
+ * Returns the first element of a given Q-Expression.
+ *
+ * @param a - Pointer to the Q-Expression to operate on.
+ *
+ * @return -  Pointer to the first element of Q-Expression.
+ */
+lval* builtin_head(lval* a) {
+
+  // Check errors
+  // ...too many args passed
+  if (a->count != 1) {
+    lval_del(a);
+    value e;
+    e.err = L_ERR_ARG_COUNT;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  // ...invalid expression passed
+  if (a->val.cell[0]->type != LVAL_QEXPR) {
+    lval_del(a);
+    value e;
+    e.err = L_ERR_BAD_TYPE;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  // ...empty expression passed
+  if (a->val.cell[0]->count == 0) {
+    lval_del(a);
+    value e;
+    e.err = L_ERR_EMPTY_Q;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  // Otherwise take first argument
+  lval* v = lval_take(a, 0);
+
+  //Delete all elements that are not head element
+  while (v->count > 1) { lval_del(lval_pop(v, 1)); }
+
+  return v;
 }
