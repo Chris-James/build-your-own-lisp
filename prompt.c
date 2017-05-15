@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpc/mpc.h"
+#include "utils.h"
 
 #ifdef _WIN32
 
@@ -307,18 +308,6 @@ int get_lval_tag(char* t) {
   if (strstr(t, "qexpr")) { tag = LVAL_QEXPR; }
   if (strcmp(t, ">") == 0 || strstr(t, "sexpr")) { tag = LVAL_SEXPR; }
   return tag;
-}
-
-/*******************************************************************************
- * is_delimiter
- * Returns 1 if given string is a delimiter.
- *
- * @param content - Pointer to string to be cheked.
- *
- * @return 1 if given string matches a delimiter
- */
-int is_delimiter(char* content) {
-  return !strcmp(content, "(") || !strcmp(content, ")") || !strcmp(content, "{") || !strcmp(content, "}");
 }
 
 /*******************************************************************************
