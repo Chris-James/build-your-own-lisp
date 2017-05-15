@@ -72,9 +72,10 @@ lval* builtin_list(lval*);
 lval* builtin_eval(lval*);
 lval* builtin_init(lval*);
 lval* builtin_cons(lval*);
+lval* builtin_len(lval*);
 
-char *builtin_names[] = { "head", "tail", "list", "eval", "init", "cons", NULL };
-lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, builtin_cons, NULL };
+char *builtin_names[] = { "head", "tail", "list", "eval", "init", "cons", "len", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, builtin_cons, builtin_len, NULL };
 
 int main(int argc, char ** argv) {
 
@@ -89,7 +90,7 @@ int main(int argc, char ** argv) {
     " number : /-?[0-9]+(\\.[0-9]+)?/;                               \
       symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/    \
              | \"head\" | \"tail\" | \"list\" | \"eval\" | \"init\"  \
-             | \"cons\";                                             \
+             | \"cons\" | \"len\";                                   \
       expr   : <number> | <symbol> | <sexpr> | <qexpr>;              \
       sexpr  : '(' <expr>* ')';                                      \
       qexpr  : '{' <expr>* '}';                                      \
@@ -778,4 +779,30 @@ lval* builtin_cons(lval* args) {
   }
 
   return new_q;
+}
+
+/*******************************************************************************
+ * builtin_len
+ * Returns the number of elements in a given Q-Expression.
+ *
+ * @param args - Arguments passed to `len` command.
+ *
+ * @return - Pointer to the number of elements in Q-Expression.
+ *
+ * @example
+ *
+ * len {2 4 6 8}
+ * // => 4
+ */
+lval* builtin_len(lval* args) {
+
+  // Grab first element passed to `len`
+  lval* q_expr = lval_pop(args, 0);
+
+  // Convert # of elements in given Q-Expression to a valid lispy value
+  value v;
+  v.num = q_expr->count;
+
+  // Return new lval
+  return make_lval(LVAL_NUM, v);
 }
