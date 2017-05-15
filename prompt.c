@@ -78,9 +78,10 @@ void lval_print(lval* v);
 
 lval* builtin_head(lval*);
 lval* builtin_tail(lval*);
+lval* builtin_list(lval*);
 
-char *builtin_names[] = { "head", "tail", NULL };
-lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, NULL };
+char *builtin_names[] = { "head", "tail", "list", NULL };
+lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, NULL };
 
 int main(int argc, char ** argv) {
 
@@ -94,7 +95,7 @@ int main(int argc, char ** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     " number : /-?[0-9]+(\\.[0-9]+)?/;                            \
       symbol : '+' | '-' | '*' | '/' | '%' | '^' | /m((in)|(ax))/ \
-             | \"head\" | \"tail\";                               \
+             | \"head\" | \"tail\" | \"list\";                    \
       expr   : <number> | <symbol> | <sexpr> | <qexpr>;           \
       sexpr  : '(' <expr>* ')';                                   \
       qexpr  : '{' <expr>* '}';                                   \
@@ -718,4 +719,17 @@ lval* builtin_tail(lval* a) {
   // Delete first element and return
   lval_del(lval_pop(v, 0));
   return v;
+}
+
+/*******************************************************************************
+ * builtin_list
+ * Returns given S-Expression as a Q-Expression.
+ *
+ * @param a - Pointer to the S-Expression to convert.
+ *
+ * @return a - Pointer to the Q-Expression.
+ */
+lval* builtin_list(lval* a) {
+  a->type = LVAL_QEXPR;
+  return a;
 }
