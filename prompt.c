@@ -542,6 +542,16 @@ lval* builtin_op(lval* a, char* op) {
  */
 lval* builtin(lval* a, char* func) {
 
+  // Search builtin command list for the given function
+  for (int i = 0; builtin_names[i] != NULL; i++) {
+
+    // If found, execute the builtin command
+    if (strcmp(func, builtin_names[i]) == 0) {
+      return builtinFn[i](a);
+    }
+
+  }
+
   // If given function matches a builtin operation, perform operation
   if (strstr("+-/*", func)) {
     return builtin_op(a, func);
