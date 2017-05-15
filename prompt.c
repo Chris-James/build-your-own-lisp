@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "mpc/mpc.h"
 #include "utils.h"
+#include "prompt.h"
 
 #ifdef _WIN32
 
@@ -23,18 +24,6 @@ void add_history(char * unused) {}
 #else
 #include <editline/readline.h>
 #endif
-
-/**
- * lval_types
- * Possible lval types
- */
-enum lval_types {
-  LVAL_NUM,
-  LVAL_ERR,
-  LVAL_SYM,
-  LVAL_SEXPR,
-  LVAL_QEXPR
-};
 
 /**
  * lval_errors
