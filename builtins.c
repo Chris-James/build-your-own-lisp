@@ -244,10 +244,10 @@ lval* builtin_list(lval* a) {
 lval* builtin_eval(lval* a) {
 
   // Ensure only one argument passed
-  L_ASSERT(args, args->count == 1, L_ERR_ARG_COUNT);
+  L_ASSERT(a, a->count == 1, L_ERR_ARG_COUNT);
 
   // Ensure argument passed was a Q-Expression
-  L_ASSERT(args, args->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
+  L_ASSERT(a, a->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
 
   lval* x = lval_take(a, 0);
   x->type = LVAL_SEXPR;
