@@ -251,6 +251,15 @@ lval* builtin_eval(lval* a) {
  */
 lval* builtin_init(lval* a) {
 
+  // Ensure only one argument passed
+  L_ASSERT(a, a->count == 1, L_ERR_ARG_COUNT);
+
+  // Ensure argument passed was a Q-Expression
+  L_ASSERT(a, a->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
+
+  // Ensure Q-Expression passed was not empty
+  L_ASSERT(a, a->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
+
   // Take first argument
   lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, (v->count - 1)));
