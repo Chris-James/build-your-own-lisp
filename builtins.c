@@ -348,6 +348,23 @@ lval* builtin_cons(lval* args) {
  */
 lval* builtin_len(lval* args) {
 
+  // Check errors
+  // ...too many args passed
+  if (args->count != 1) {
+    lval_del(args);
+    value e;
+    e.err = L_ERR_ARG_COUNT;
+    return make_lval(LVAL_ERR, e);
+  }
+
+  // ...invalid expression passed
+  if (args->val.cell[0]->type != LVAL_QEXPR) {
+    lval_del(args);
+    value e;
+    e.err = L_ERR_BAD_TYPE;
+    return make_lval(LVAL_ERR, e);
+  }
+
   // Grab first element passed to `len`
   lval* q_expr = lval_pop(args, 0);
 
