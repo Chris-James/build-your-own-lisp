@@ -142,23 +142,24 @@ lval* builtin(lval* a, char* func) {
  * builtin_head
  * Returns the first element of a given Q-Expression.
  *
- * @param a - Pointer to the Q-Expression to operate on.
+ * @param args - Pointer to arguments passed to function. `head` expects that the
+ *        element at index 0 is the Q-Expression to operate on.
  *
  * @return -  Pointer to the first element of Q-Expression.
  */
-lval* builtin_head(lval* a) {
+lval* builtin_head(lval* args) {
 
   // Ensure only one argument passed
-  L_ASSERT(a, a->count == 1, L_ERR_ARG_COUNT);
+  L_ASSERT(args, args->count == 1, L_ERR_ARG_COUNT);
 
   // Ensure argument passed was a Q-Expression
-  L_ASSERT(a, a->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
+  L_ASSERT(args, args->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
 
   // Ensure Q-Expression passed was not empty
-  L_ASSERT(a, a->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
+  L_ASSERT(args, args->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
 
-  // Otherwise take first argument
-  lval* v = lval_take(a, 0);
+  // Take first argument
+  lval* v = lval_take(args, 0);
 
   //Delete all elements that are not head element
   while (v->count > 1) { lval_del(lval_pop(v, 1)); }
