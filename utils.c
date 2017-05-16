@@ -1,6 +1,4 @@
-#include <string.h>
 #include "utils.h"
-#include "prompt.h"
 
 /*******************************************************************************
  * is_delimiter
