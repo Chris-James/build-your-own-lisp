@@ -1,5 +1,7 @@
 #include "builtins.h"
 
+#define L_ASSERT(arg, condition, error) if (!(condition)) { lval_del(arg); value e; e.err = error; return make_lval(LVAL_ERR, e); }
+
 char *builtin_names[] = { "head", "tail", "list", "eval", "init", "cons", "len", NULL };
 lval* (*builtinFn[])(lval*) = { builtin_head, builtin_tail, builtin_list, builtin_eval, builtin_init, builtin_cons, builtin_len, NULL };
 
