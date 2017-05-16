@@ -248,23 +248,24 @@ lval* builtin_eval(lval* args) {
  * builtin_init
  * Returns all elements in given Q-Expression except the last.
  *
- * @param a - Pointer to the Q-Expression to operate on.
+ * @param args - Pointer to arguments passed to function. `init` expects that the
+ *        element at index 0 is the Q-Expression to convert & evaluate.
  *
  * @return - Pointer to the list of remaining elements.
  */
-lval* builtin_init(lval* a) {
+lval* builtin_init(lval* args) {
 
   // Ensure only one argument passed
-  L_ASSERT(a, a->count == 1, L_ERR_ARG_COUNT);
+  L_ASSERT(args, args->count == 1, L_ERR_ARG_COUNT);
 
   // Ensure argument passed was a Q-Expression
-  L_ASSERT(a, a->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
+  L_ASSERT(args, args->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
 
   // Ensure Q-Expression passed was not empty
-  L_ASSERT(a, a->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
+  L_ASSERT(args, args->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
 
   // Take first argument
-  lval* v = lval_take(a, 0);
+  lval* v = lval_take(args, 0);
   lval_del(lval_pop(v, (v->count - 1)));
   return v;
 }
