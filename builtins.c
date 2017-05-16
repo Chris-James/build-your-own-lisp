@@ -196,30 +196,14 @@ lval* builtin_head(lval* a) {
  */
 lval* builtin_tail(lval* a) {
 
-  // Check errors
-  // ...too many args passed
-  if (a->count != 1) {
-    lval_del(a);
-    value e;
-    e.err = L_ERR_ARG_COUNT;
-    return make_lval(LVAL_ERR, e);
-  }
+  // Ensure only one argument passed
+  L_ASSERT(a, a->count == 1, L_ERR_ARG_COUNT);
 
-  // ...invalid expression passed
-  if (a->val.cell[0]->type != LVAL_QEXPR) {
-    lval_del(a);
-    value e;
-    e.err = L_ERR_BAD_TYPE;
-    return make_lval(LVAL_ERR, e);
-  }
+  // Ensure argument passed was a Q-Expression
+  L_ASSERT(a, a->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
 
-  // ...empty expression passed
-  if (a->val.cell[0]->count == 0) {
-    lval_del(a);
-    value e;
-    e.err = L_ERR_EMPTY_Q;
-    return make_lval(LVAL_ERR, e);
-  }
+  // Ensure Q-Expression passed was not empty
+  L_ASSERT(a, a->val.cell[0]->count != 0, L_ERR_EMPTY_Q);
 
   // Take first argument
   lval* v = lval_take(a, 0);
