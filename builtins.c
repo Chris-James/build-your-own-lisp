@@ -366,7 +366,7 @@ lval* builtin_len(lval* args) {
   }
 
   // Grab first element passed to `len`
-  lval* q_expr = lval_pop(args, 0);
+  lval* q_expr = lval_take(args, 0);
 
   // Convert # of elements in given Q-Expression to a valid lispy value
   value v;
