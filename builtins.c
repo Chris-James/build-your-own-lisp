@@ -350,11 +350,10 @@ lval* builtin_cons(lval* args) {
  */
 lval* builtin_len(lval* args) {
 
-  // Check errors
-  // ...too many args passed
+  // Ensure `len` was passed only one argument
   L_ASSERT(args, args->count == 1, L_ERR_ARG_COUNT);
 
-  // ...invalid expression passed
+  // Ensure `len` was passed a Q-Expression
   L_ASSERT(args, args->val.cell[0]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
 
   // Grab first element passed to `len`
