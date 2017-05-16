@@ -274,6 +274,13 @@ lval* builtin_init(lval* a) {
  */
 lval* builtin_cons(lval* args) {
 
+  // Ensure exactly two arguments passed
+  L_ASSERT(args, args->count == 2, L_ERR_ARG_COUNT);
+
+  // Ensure arguments are valid types
+  L_ASSERT(args, args->val.cell[0]->type == LVAL_NUM, L_ERR_BAD_TYPE);
+  L_ASSERT(args, args->val.cell[1]->type == LVAL_QEXPR, L_ERR_BAD_TYPE);
+
   // Create new Q-Expression with a dummy value
   value _;
   _.num = 0;
